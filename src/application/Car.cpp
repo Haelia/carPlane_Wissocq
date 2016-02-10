@@ -73,6 +73,15 @@ void Car::drawWheel() {
 }
 
 void Car::drawAxle() {
+    modelviewMatrix.push();
+    modelviewMatrix.translate(0,0,-10);
+     modelviewMatrix.scale(0.5,0.5,10);
+    drawCylinder();
+
+    modelviewMatrix.pop();
+    modelviewMatrix.push();
+    drawWheel();
+    modelviewMatrix.pop();
 
 }
 
@@ -99,7 +108,9 @@ modelviewMatrix.translate(0,1,0);
 //Question 3
 //drawRim();
 //Question 4
-  drawWheel();
+  //drawWheel();
+//Question 5
+    drawAxle();
 
 
   p3d::modelviewMatrix.pop();
