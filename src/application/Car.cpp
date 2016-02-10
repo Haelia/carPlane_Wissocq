@@ -76,10 +76,12 @@ void Car::drawAxle() {
     modelviewMatrix.push();
     modelviewMatrix.translate(0,0,-10);
      modelviewMatrix.scale(0.5,0.5,10);
+     diffuseColor=Vector3(0,1,0);
     drawCylinder();
-
     modelviewMatrix.pop();
     modelviewMatrix.push();
+    drawWheel();
+    modelviewMatrix.translate(0,0,-10);
     drawWheel();
     modelviewMatrix.pop();
 
@@ -89,7 +91,7 @@ void Car::drawBody() {
 
     modelviewMatrix.push();
     modelviewMatrix.scale(3,1,1);
-    diffuseColor=Vector3(0,0,1);
+    diffuseColor=Vector3(1,0,1);
     drawCube();
     modelviewMatrix.pop();
 
@@ -102,7 +104,8 @@ void Car::drawBody() {
 
 void Car::draw() {
   p3d::modelviewMatrix.push();
-modelviewMatrix.translate(0,1,0);
+modelviewMatrix.translate(0,-1,0);
+
 //Question 2
 //drawBody();
 //Question 3
@@ -110,9 +113,27 @@ modelviewMatrix.translate(0,1,0);
 //Question 4
   //drawWheel();
 //Question 5
-    drawAxle();
+//drawAxle();
 
+   drawBody();
+   modelviewMatrix.pop();
 
+   //Axe Arrière
+   modelviewMatrix.push();
+   modelviewMatrix.translate(2,-2,1.5);
+   modelviewMatrix.scale(0.2,0.2,0.3);
+   modelviewMatrix.rotate(_rotateWheel,0,0,1);
+   drawAxle();
+   modelviewMatrix.pop();
+
+   //Axe avant
+   modelviewMatrix.push();
+   modelviewMatrix.translate(-2,-2,1.5);
+   modelviewMatrix.scale(0.2,0.2,0.3);
+   modelviewMatrix.rotate(_steering,0,1,0);
+   modelviewMatrix.rotate(_rotateWheel,0,0,1);
+
+   drawAxle();
   p3d::modelviewMatrix.pop();
 }
 
@@ -120,6 +141,8 @@ modelviewMatrix.translate(0,1,0);
 void Car::drawWorld() {
 
   p3d::modelviewMatrix.push();
+  modelviewMatrix.translate(_position);
+  modelviewMatrix.rotate(_orientation);
 
   draw(); // tracé de la voiture dans son repère local
   p3d::modelviewMatrix.pop();
@@ -128,11 +151,11 @@ void Car::drawWorld() {
 void Car::move() {
   _acceleration+=-_velocity/50;
   _velocity+=_acceleration;
-  _rotateWheel+=_velocity*20;
+  _rotateWheel+=_velocity*15;
   _steering-=_steering/10*fabs(_velocity);
 
   _orientation.rotate(_steering*_velocity/(1.0+fabs(_velocity)),Vector3(0,1,0)); // le /(1.0+fabs(_velocity)) a été déterminé empiriquement
-
+  _position= _position+(_orientation*Vector3(-1,0,0)*_velocity);
 }
 
 
